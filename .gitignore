@@ -1,6 +1,7 @@
 #PYTHON
 #compiled files
 *.pyc
+/__pycache__
 #my virtualenvironment
 /env
 #configs
