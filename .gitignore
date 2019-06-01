@@ -3,12 +3,12 @@
 *.pyc
 /__pycache__
 #my virtualenvironment
-/env
+/server/env
 #configs
 config.py
 
 #Javascript
-/node_modules
+/frontend/node_modules
 #environment variables file
 .env
 #compiled output
