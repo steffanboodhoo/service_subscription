@@ -1,0 +1,15 @@
+#PYTHON
+#compiled files
+*.pyc
+#my virtualenvironment
+/env
+#configs
+config.py
+
+#Javascript
+/node_modules
+#environment variables file
+.env
+#compiled output
+/tmp
+
