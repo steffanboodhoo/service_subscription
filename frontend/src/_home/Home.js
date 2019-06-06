@@ -4,24 +4,61 @@ import { connect } from 'react-redux';
 
 import * as subscription_actions from '../ducks/Subscription/Actions';
 import * as customer_actions from '../ducks/Customer/Actions';
+import * as service_actions from '../ducks/Service/Actions';
+import { status, names } from '../ducks/RequestStatus/Actions';
+
 import CustomerSearch from './CustomerSearch';
+import CustomerDetails from '../_details/CustomerDetails';
+import SubscriptionManage from '../_subscription/subscription_mgt/SubscriptionManage';
+import SubscriptionUpdate from '../_subscription/subscription_update/SubscriptionUpdate'
+
+import Loading from '../common/Loading';
+import DefaultTextView from '../common/DefaultTextView';
+
 class Home extends Component {
 
     render() {
-        return (
-            <CustomerSearch/>
-            // <div>{this.props.subscription.map((el, i) => {
-            //     return (<div key={i}>{el.service_id}</div>)
-            // })}
-            // {this.props.customer.first_name}
-            // </div>
-        )
+        return (<div>
+            <div className='row'>
+                <CustomerSearch handle_customer_search={this.handle_customer_search.bind(this)} />
+            </div>
+            <div>
+                {this.load_view()}
+            </div>
+
+        </div>)
     }
     componentDidMount() {
-        this.props.subscription_actions.get_subscriptions(1);
-        this.props.customer_actions.get_customer({ email: 'boodhoo100@gmail.com' })
+        this.props.service_actions.get_services();
+        // this.props.customer_actions.get_customer({ email: 'boodhoo100@gmail.com' })
+        // this.props.subscription_actions.get_subscriptions(1);
+    }
+    handle_customer_search(params) {
+        this.props.customer_actions.get_customer(params);
+    }
+
+    load_view() {
+        if (this.props.customer.customer_id != '') {
+            return (<div className='row'>
+                <div className='col m2'>
+                    <CustomerDetails customer={this.props.customer} />
+                </div>
+                <div className='col m5'>
+                    <SubscriptionManage customer={this.props.customer} />
+                </div>
+                <div className='col m5'>
+                    <SubscriptionUpdate customer={this.props.customer} />
+                </div>
+            </div>);
+            // return (<SubscriptionList subscriptions={this.props.subscription} />);
+        }
+        else if (this.props.request_status.name == names.GET_CUSTOMER && this.props.request_status.status == status.PENDING)
+            return (<Loading />);
+        else
+            return (<DefaultTextView />)
     }
 }
-const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer })
-const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch) })
+const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status:state.RequestStatus })
+const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch), service_actions: bindActionCreators(service_actions, dispatch) })
+
 export default connect(mapStateToProps, mapActionsToProps)(Home);

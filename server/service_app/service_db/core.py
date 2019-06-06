@@ -1,6 +1,7 @@
 # from sqlalchemy.orm.query import Query
 def get(session, Model, filters=None, offset=None, limit=None):
     records = []
+    print filters
     query = session.query(Model)
     if filters!=None:
         for key, val in filters.items():

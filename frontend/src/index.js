@@ -4,9 +4,11 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux'
 import thunkMiddleware from 'redux-thunk';
 import RootReducer from './_app/RootReducer';
+
 // import './common/common.css';
-import 'materialize-css/dist/css/materialize.css';
-// import 'materialize-css';
+import 'materialize-css/dist/css/materialize.css'; //CSS
+import 'materialize-css'; //Only imports the javascript components
+
 const store = createStore(
     RootReducer,
     applyMiddleware(thunkMiddleware)
