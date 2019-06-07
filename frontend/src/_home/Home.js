@@ -33,6 +33,14 @@ class Home extends Component {
         // this.props.customer_actions.get_customer({ email: 'boodhoo100@gmail.com' })
         // this.props.subscription_actions.get_subscriptions(1);
     }
+    componentWillReceiveProps(nextProps) {
+        console.log(this.props.customer)
+        console.log(nextProps.customer)
+        if(this.props.customer.customer_id != nextProps.customer.customer_id){
+            this.props.subscription_actions.get_subscriptions(nextProps.customer.customer_id);
+        }
+    }
+
     handle_customer_search(params) {
         this.props.customer_actions.get_customer(params);
     }
@@ -44,13 +52,12 @@ class Home extends Component {
                     <CustomerDetails customer={this.props.customer} />
                 </div>
                 <div className='col m5'>
-                    <SubscriptionManage customer={this.props.customer} />
+                    <SubscriptionManage services={this.props.service} subscription={this.props.subscription} customer={this.props.customer} />
                 </div>
                 <div className='col m5'>
-                    <SubscriptionUpdate customer={this.props.customer} />
+                    <SubscriptionUpdate customer={this.props.customer} subscription={this.props.subscription}/>
                 </div>
             </div>);
-            // return (<SubscriptionList subscriptions={this.props.subscription} />);
         }
         else if (this.props.request_status.name == names.GET_CUSTOMER && this.props.request_status.status == status.PENDING)
             return (<Loading />);
@@ -58,7 +65,7 @@ class Home extends Component {
             return (<DefaultTextView />)
     }
 }
-const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status:state.RequestStatus })
+const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status: state.RequestStatus })
 const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch), service_actions: bindActionCreators(service_actions, dispatch) })
 
 export default connect(mapStateToProps, mapActionsToProps)(Home);

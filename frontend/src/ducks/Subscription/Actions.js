@@ -14,7 +14,9 @@ export const get_subscriptions = (customer_id) => {
         }).then(response => {
             if (response.status == 200) {
                 update(status.SUCCESS, names.ADD_SUBSCRIPTION)
-                recieve_subscriptions(dispatch, response.data)
+                let data = {}
+                response.data.forEach(el => data[el.service_id] = el);
+                recieve_subscriptions(dispatch, data);
             } else {
                 update(status.FAILURE, names.ADD_SUBSCRIPTION)
             }
@@ -42,11 +44,11 @@ export const update_subscription = ({ service_id, status, customer_id }) => {
     return dispatch => {
         update(status.PENDING, names.UPDATE_SUBSCRIPTION)
         Axios.put('http://localhost:5000/subscription', {
-            params:params
-        }).then( response => {
-            if(response.status == 200){
+            params: params
+        }).then(response => {
+            if (response.status == 200) {
                 update(status.SUCCESS, names.UPDATE_SUBSCRIPTION)
-            }else{
+            } else {
                 update(status.FAILURE, names.UPDATE_SUBSCRIPTION)
             }
         })

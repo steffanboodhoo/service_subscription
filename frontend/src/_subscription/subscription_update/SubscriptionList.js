@@ -7,7 +7,7 @@ class SubscriptionList extends Component {
     }
     render() {
         return (<div>
-            {this.props.subscriptions.map((el, i) => {
+            {Object.entries(this.props.subscriptions).map(([i, el]) => {
                 return this.create_item(el, i);
             })}
         </div>)
