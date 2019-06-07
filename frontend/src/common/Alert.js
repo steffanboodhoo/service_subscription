@@ -3,11 +3,12 @@ import React, { Component } from 'react';
 class Alert extends Component {
     constructor(props) {
         super(props);
-        this.state = { instance: null };
+        const custom_id = `alert_modal_${this.props.cid}`;
+        this.state = { instance: null, custom_id };
     }
     render() {
         return (
-            <div id="alert_modal" className="modal">
+            <div id={this.state.custom_id} className="modal">
                 <div className="modal-content">
                     <div className={`row ${this.props.type}`} ><h4>{this.props.header}</h4></div>
                     <div className='row'><p>{this.props.message}</p></div>
@@ -19,7 +20,7 @@ class Alert extends Component {
         )
     }
     componentDidMount() {
-        let instance = document.getElementById('alert_modal');
+        let instance = document.getElementById(this.state.custom_id);
         instance = M.Modal.init(instance);
         this.setState({ instance })
     }

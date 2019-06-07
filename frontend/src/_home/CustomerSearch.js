@@ -20,7 +20,7 @@ class CustomerSearch extends Component {
                     <a className="waves-effect waves-light btn width-fill" onClick={this.handle_submit.bind(this)}>Search</a>
                 </div>
             </div>
-            <Alert ref='alert_modal' type='alert-error' header='Invalid Search Information' message='Please enter a valid phone number 10 digits e.g. 8681234567 or a valid email address joe@bad.com' />
+            <Alert ref='alert_modal' cid='search' type='alert-error' header='Invalid Search Information' message='Please enter a valid phone number 10 digits e.g. 8681234567 or a valid email address joe@bad.com' />
         </div>)
     }
 

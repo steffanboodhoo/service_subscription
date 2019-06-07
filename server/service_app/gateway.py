@@ -9,6 +9,10 @@ def add_customer(email, contact_number, first_name, last_name):
 def get_customer(contact_number=None, email=None):
     return json.dumps(sdb.get_customer(contact_number, email))
 
+def get_customer_multiple(name, offset=None):
+    names = name.split(' ')
+    first_name, last_name = names[0], names[0] if len(names)==1 else names[1]
+    return json.dumps(sdb.get_customer_multiple(first_name, last_name, offset=offset))
 
 def get_subscriptions(customer_id):
     return json.dumps(sdb.get_subscription(customer_id))

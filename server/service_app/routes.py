@@ -34,11 +34,17 @@ def handle_subscription():
         data = request.get_json()
         return gateway.update_subscription(data['customer_id'], data['service_id'], data['status'])
 
-@app.route('/test', methods=['GET'])
-def test():
-    return gateway.get_services()
+@app.route('/customer/multiple', methods=['GET'])
+def handle_customer_multiple():
+    name = request.args.get('name')
+    offset = request.args.get('offset')
+    return gateway.get_customer_multiple(name, offset=offset), 200
 
 @app.route('/service', methods=['GET'])
 def handle_service():
+    return gateway.get_services()
+
+@app.route('/test', methods=['GET'])
+def test():
     return gateway.get_services()
 

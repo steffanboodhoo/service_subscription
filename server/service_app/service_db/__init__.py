@@ -5,7 +5,7 @@ import core
 from service_app import config
 engine = create_engine(config.DB_URI, echo=False)
 Base.metadata.create_all(engine)
-
+LIMIT = 3
 
 class ServiceAPI():
 
@@ -32,6 +32,18 @@ class ServiceAPI():
         customer = self.clean_records(core.get(session, Customer, filters))[0]
         session.close()
         return customer
+
+    def get_customer_multiple(self, first_name, last_name, offset=None):
+        session = Session(engine)
+        if offset is None:
+            offset = 0
+        else:
+            offset = int(offset)
+            limit = offset + LIMIT
+        customers = self.clean_records(core.handle_get_customer_multiple(
+            session, Customer, first_name, last_name, limit=limit, offset=offset))
+        session.close()
+        return customers
 
     def get_subscription(self, customer_id):
         session = Session(engine)

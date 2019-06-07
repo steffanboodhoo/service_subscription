@@ -15,6 +15,7 @@ import SubscriptionManage from '../_subscription/SubscriptionManage'
 import Loading from '../common/Loading';
 import Alert from '../common/Alert';
 import DefaultTextView from '../common/DefaultTextView';
+import CustomerForm from '../common/CustomerForm';
 
 class Home extends Component {
 
@@ -25,47 +26,57 @@ class Home extends Component {
             </div>
             <div className='main-container'>
                 {this.load_view()}
+                
             </div>
+            <CustomerForm ref='add_customer_modal' handle_add_customer={this.handle_add_customer.bind(this)}/>
             <Loading ref='loading_modal' />
-            <Alert ref='alert_modal_success' type='alert-success' header='Success' message={this.props.request_status.message} />
+            <Alert ref='success_modal' cid='success' type='alert-success' header='Success' message={this.props.request_status.message} />
+            <Alert ref='failure_modal' cid='failure' type='alert-failure' header='Failure' message={this.props.request_status.message} />
+            <Alert ref='empty_modal' cid='empty' type='alert-Empty' header='Empty' message={'No results that match your search :('} />
         </div>)
     }
     componentDidMount() {
-        let el = document.querySelectorAll(".tabs");
-        M.Tabs.init(el, {});
+        // let el = document.querySelectorAll(".tabs");
+        // M.Tabs.init(el, {});
         this.props.service_actions.get_services();
-        // this.props.customer_actions.get_customer({ email: 'boodhoo100@gmail.com' })
-        // this.props.subscription_actions.get_subscriptions(1);
     }
     componentWillReceiveProps(nextProps) {
-        if (this.props.customer.customer_id != nextProps.customer.customer_id) {
-            this.props.subscription_actions.get_subscriptions(nextProps.customer.customer_id);
+        console.log(nextProps)
+        if (this.props.customer.selected.customer_id != nextProps.customer.selected.customer_id) {
+            this.props.subscription_actions.get_subscriptions(nextProps.customer.selected.customer_id);
         }
+        //IF THE STATUS OF A REQUEST CHANGES e.g. a request is now *pending*, or the request has *succeeded* or *failed*
         if (this.props.request_status.status != nextProps.request_status.status) {
             if (nextProps.request_status.status == status.PENDING)
                 this.refs.loading_modal.display()
             else
-                this.refs.loading_modal.close()
+                this.refs.loading_modal.close()// even if the Loading Modal was not open close has no effect so this is fine
+
+            //We want to show the request was successful
+            if(nextProps.request_status.status == status.SUCCESS)
+                this.refs.success_modal.display()
         }
     }
 
     handle_customer_search(params) {
         this.props.customer_actions.get_customer(params);
     }
-
+    handle_add_customer(params){
+        this.props.customer_actions.add_customer(params);
+    }
     load_view() {
-        if (this.props.customer.customer_id != '') {
+        if (this.props.customer.selected.customer_id != '') {
             return (
                 <div>
                     <div className='row'>
                         <div className='col m2 s12 card-panel  column-container'>
-                            <CustomerDetails customer={this.props.customer} />
+                            <CustomerDetails customer={this.props.customer.selected} />
                         </div>
                         <div className='col m5 s12  hoverable column-container'>
-                            <SubscriptionAdd services={this.props.service} subscription={this.props.subscription} customer={this.props.customer} />
+                            <SubscriptionAdd customer={this.props.customer.selected} services={this.props.service} subscription={this.props.subscription}/>
                         </div>
                         <div className='col m5 s12 column-container'>
-                            <SubscriptionManage services={this.props.service} subscription={this.props.subscription} customer={this.props.customer} />
+                            <SubscriptionManage customer={this.props.customer.selected} services={this.props.service} subscription={this.props.subscription}/>
                         </div>
                     </div>
                     {/* <div className='row' id='device_tabs'>
@@ -93,7 +104,10 @@ class Home extends Component {
         // else if (this.props.request_status.name == names.GET_CUSTOMER && this.props.request_status.status == status.PENDING)
         //     return (<Loading />);
         else
-            return (<DefaultTextView />)
+            return (<DefaultTextView handle_click={ this.open_add_customer_form.bind(this) }/>)
+    }
+    open_add_customer_form(){
+        this.refs.add_customer_modal.display()
     }
 }
 const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status: state.RequestStatus })
