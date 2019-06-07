@@ -1,3 +1,27 @@
-.container{
-    background-color: red;
+.center-content{
+    /* display: flex; */
+  align-items: center;
+  justify-content: center;
+}
+.main-container{
+  padding: 1%;
+}
+
+.alert-error{
+  background-color:#e57373;
+}
+.alert-error{
+  background-color:#a5d6a7;
+}
+
+
+.width-fill{
+  width: 100%;
+}
+.flex-row-container{
+  display: flex;
+  flex-direction: row;
+}
+.flex-service-action-item{
+  flex:1;
 }

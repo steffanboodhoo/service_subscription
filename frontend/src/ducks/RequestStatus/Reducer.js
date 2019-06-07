@@ -9,6 +9,7 @@ const initial_state = {
 export default (state = initial_state, action) => {
     switch (action.type) {
         case (types.UPDATE): {
+            console.log('request status update')
             return {
                 name: action.payload.name,
                 status: action.payload.status,

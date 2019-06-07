@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as subscription_actions from '../../ducks/Subscription/Actions';
+import * as subscription_actions from '../ducks/Subscription/Actions';
 import { filter } from 'minimatch';
 
-class SubscriptionMange extends Component {
+class SubscriptionAdd extends Component {
     constructor(props) {
         super(props);
+        console.log(this.props)
         this.state = { selected_service_id: '' }
     }
     render() {
         return (<div>
+        <h5>Add Subscription</h5>
             <div className='input-field col s12'>
                 <select id='select_service' onChange={this.handle_on_select.bind(this)} defaultValue={'-1'}>
                     <option value='-1' disabled={true} >Choose your option</option>
@@ -24,7 +26,7 @@ class SubscriptionMange extends Component {
                 {this.selected_service()}
             </div>
             <div>
-                <a className="waves-effect waves-light btn" onClick={this.handle_add_service.bind(this)} disabled={this.state.selected_service_id==''}>Add Service</a>
+                <a className="waves-effect waves-light btn" onClick={this.handle_add_service.bind(this)} disabled={this.state.selected_service_id == ''}>Add Service</a>
             </div>
         </div>)
     }
@@ -33,7 +35,7 @@ class SubscriptionMange extends Component {
         M.FormSelect.init(document.getElementById('select_service'))
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
         M.FormSelect.init(document.getElementById('select_service'))
     }
     filter_list(services, subscriptions) {
@@ -57,13 +59,13 @@ class SubscriptionMange extends Component {
             </div>)
         }
     }
-    handle_add_service(){
+    handle_add_service() {
         const customer_id = this.props.customer.customer_id, service_id = this.state.selected_service_id;
-        const params = {customer_id, service_id};
-        console.log(params)
+        const params = { customer_id, service_id };
+        this.props.subscription_actions.add_subscription(params)
     }
 }
 const mapStateToProps = (state) => ({ request_status: state.RequestStatus });
 const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch) })
 
-export default connect(mapStateToProps, mapActionsToProps)(SubscriptionMange);
+export default connect(mapStateToProps, mapActionsToProps)(SubscriptionAdd);

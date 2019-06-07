@@ -1,7 +1,10 @@
 import React from 'react';
 const CustomerDetails = (props) => {
     return (<div>
-        <h4> {props.customer.first_name} {props.customer.last_name} </h4>
+        <div className='row'> <h5>Details</h5> </div>
+        <div className='row'>
+            <p>{props.customer.first_name} {props.customer.last_name} </p>
+        </div>
 
     </div>)
 }

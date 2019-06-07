@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Modal from '../common/Modal';
+import Alert from '../common/Alert';
 // import 'materialize-css';
 
 class CustomerSearch extends Component {
@@ -14,13 +14,13 @@ class CustomerSearch extends Component {
 
     render() {
         return (<div className='row'>
-            <div className='col s8'>
-                <div className="input-field col s6">
+            <div className='col m10 s12'>
+                <div className="input-field">
                     <input placeholder='email address (joe@bad.com) or full contact number (8681234567)' id='input_search' onChange={this.handle_onchange.bind(this)} type='text' className="validate" />
-                    <a className="waves-effect waves-light btn" onClick={this.handle_submit.bind(this)}>button</a>
+                    <a className="waves-effect waves-light btn width-fill" onClick={this.handle_submit.bind(this)}>Search</a>
                 </div>
             </div>
-            <Modal ref='modal' type='' header='Invalid Search Information' message='Please enter a valid phone number 10 digits e.g. 8681234567 or a valid email address joe@bad.com' />
+            <Alert ref='alert_modal' type='alert-error' header='Invalid Search Information' message='Please enter a valid phone number 10 digits e.g. 8681234567 or a valid email address joe@bad.com' />
         </div>)
     }
 
@@ -43,7 +43,7 @@ class CustomerSearch extends Component {
 
     handle_submit(ev) {
         if (!(this.state.valid_number || this.state.valid_email)) {
-            this.refs.modal.display();
+            this.refs.alert_modal.display();
             return;
         }
         let params = {}
