@@ -50,12 +50,12 @@ class SubscriptionAdd extends Component {
     }
     selected_service() {
         if (this.state.selected_service_id == '')
-            return (<h4>Nothing Selected</h4>)
+            return (<h6>Nothing Selected</h6>)
         else {
             const service = this.props.services[this.state.selected_service_id]
             return (<div>
-                <h4>{service.name}</h4>
-                <h6>{service.description}</h6>
+                <h6>{service.name}</h6>
+                <p>{service.description}</p>
             </div>)
         }
     }

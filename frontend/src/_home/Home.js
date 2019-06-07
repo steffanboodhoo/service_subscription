@@ -7,11 +7,13 @@ import * as customer_actions from '../ducks/Customer/Actions';
 import * as service_actions from '../ducks/Service/Actions';
 import { status, names } from '../ducks/RequestStatus/Actions';
 
-import CustomerSearch from './CustomerSearch';
-import CustomerDetails from '../_details/CustomerDetails';
+import CustomerSearch from '../_customer_search/CustomerSearch';
+import CustomerSelect from '../_customer_search/CustomerSelect';
+
 import SubscriptionAdd from '../_subscription/SubscriptionAdd';
 import SubscriptionManage from '../_subscription/SubscriptionManage'
 
+import CustomerDetails from '../_details/CustomerDetails';
 import Loading from '../common/Loading';
 import Alert from '../common/Alert';
 import DefaultTextView from '../common/DefaultTextView';
@@ -22,14 +24,16 @@ class Home extends Component {
     render() {
         return (<div className=''>
             <div className='row card-panel hoverable center-align center-content'>
-                <CustomerSearch handle_customer_search={this.handle_customer_search.bind(this)} />
+                <CustomerSearch handle_customer_id_search={this.handle_customer_id_search.bind(this)} handle_customer_name_search={this.handle_customer_name_search.bind(this)}/>
             </div>
             <div className='main-container'>
                 {this.load_view()}
-                
             </div>
+
+            <CustomerSelect ref='select_customer_modal' customers={this.props.customer.list} load_more={this.props.customer.load_more} handle_load_more_customers={this.handle_load_more_customers.bind(this)} handle_select_customer={this.handle_select_customer.bind(this)}/>
             <CustomerForm ref='add_customer_modal' handle_add_customer={this.handle_add_customer.bind(this)}/>
             <Loading ref='loading_modal' />
+
             <Alert ref='success_modal' cid='success' type='alert-success' header='Success' message={this.props.request_status.message} />
             <Alert ref='failure_modal' cid='failure' type='alert-failure' header='Failure' message={this.props.request_status.message} />
             <Alert ref='empty_modal' cid='empty' type='alert-Empty' header='Empty' message={'No results that match your search :('} />
@@ -41,7 +45,6 @@ class Home extends Component {
         this.props.service_actions.get_services();
     }
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps)
         if (this.props.customer.selected.customer_id != nextProps.customer.selected.customer_id) {
             this.props.subscription_actions.get_subscriptions(nextProps.customer.selected.customer_id);
         }
@@ -55,11 +58,25 @@ class Home extends Component {
             //We want to show the request was successful
             if(nextProps.request_status.status == status.SUCCESS)
                 this.refs.success_modal.display()
+            
+            if(nextProps.request_status.name == names.GET_CUSTOMERS && nextProps.request_status.status == status.NONE)
+                this.refs.select_customer_modal.display()
         }
     }
 
-    handle_customer_search(params) {
+    handle_customer_id_search(params) {
         this.props.customer_actions.get_customer(params);
+    }
+    handle_customer_name_search(name){
+        this.props.customer_actions.get_customers_by_name({name});
+    }
+    handle_load_more_customers(name){
+        const offset = this.props.customer.list.length;
+        this.props.customer_actions.load_more_customers_by_name({name, offset})
+    }
+    handle_select_customer(customer){
+        this.props.customer_actions.set_customer(customer);
+        this.refs.select_customer_modal.close()
     }
     handle_add_customer(params){
         this.props.customer_actions.add_customer(params);

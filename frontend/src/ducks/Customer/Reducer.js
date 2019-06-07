@@ -7,19 +7,36 @@ const initial_state = {
         email: '',
         contact_number: ''
     },
-    list: []
+    list: [],
+    load_more: true
 }
 
 export default (state = initial_state, action) => {
     switch (action.type) {
         case (types.SET_CUSTOMER): {
             console.log(action)
-            return { ...state,
-                selected:action.payload.customer};
+            return {
+                ...state,
+                selected: action.payload.customer
+            };
         }
-        case(types.RECEIVE_MULTIPLE_CUSTOMERS):{
-            return {...state,
+        case (types.SET_MULTIPLE_CUSTOMERS): {
+            console.log(action)
+            return {
+                ...state,
+                list: action.payload.customers,
+            }
+        }
+        case (types.ADD_MULTIPLE_CUSTOMERS): {
+            return {
+                ...state,
                 list: state.list.concat(action.payload.customers),
+            }
+        }
+        case (types.STOP_LOADING): {
+            return {
+                ...state,
+                load_more: false
             }
         }
         default:

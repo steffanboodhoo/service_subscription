@@ -2,9 +2,11 @@ import Axios from "axios";
 import { names, status, update } from '../RequestStatus/Actions';
 
 const SET_CUSTOMER = 'CUSTOMER/SET_CUSTOMER';
-const RECEIVE_MULTIPLE_CUSTOMERS = 'CUSTOMER/RECEIVE_MULTIPLE_CUSTOMERS';
+const SET_MULTIPLE_CUSTOMERS = 'CUSTOMER/SET_MULTIPLE_CUSTOMERS';
+const ADD_MULTIPLE_CUSTOMERS = 'CUSTOMER/ADD_MULTIPLE_CUSTOMERS';
+const STOP_LOADING = 'CUSTOMER/STOP_LOADING';
 
-export const types = { SET_CUSTOMER, RECEIVE_MULTIPLE_CUSTOMERS };
+export const types = { SET_CUSTOMER, SET_MULTIPLE_CUSTOMERS, ADD_MULTIPLE_CUSTOMERS, STOP_LOADING };
 
 export const get_customer = ({ email, contact_number }) => {
     let params = contact_number != undefined ? { contact_number } : { email };
@@ -15,7 +17,7 @@ export const get_customer = ({ email, contact_number }) => {
         }).then(resp => {
             if (resp.status == 200) {
                 dispatch(update(status.NONE, names.GET_CUSTOMER));
-                set_customer(dispatch, resp.data);
+                dispatch(set_customer(resp.data));
             } else if (resp.status == 409) {
                 let message = ('data' in resp && 'message' in resp.data) ? resp.data.message : '';
                 dispatch(update(status.FAILURE, names.GET_CUSTOMER, message));
@@ -24,25 +26,28 @@ export const get_customer = ({ email, contact_number }) => {
         })
     }
 }
-const set_customer = (dispatch, customer) => {
-    dispatch({
+
+export const set_customer = (customer) => {
+    return {
         type: SET_CUSTOMER,
         payload: { customer }
-    })
+    }
 }
 
-export const get_customers_by_name = (name_str) => {
+
+export const get_customers_by_name = ({ name }) => {
+    console.log(name)
     return dispatch => {
-        dispatch(update(status.SUCCESS, names.GET_CUSTOMERS))
-        Axios.get('http://localhost:5000/customers', {
-            params: params
+        dispatch(update(status.PENDING, names.GET_CUSTOMERS))
+        Axios.get('http://localhost:5000/customer/multiple', {
+            params: { name }
         }).then(resp => {
             console.log(resp)
             if (resp.status == 200) {
-                if (resp.data.length == 0)// if empty set
+                if (resp.data.length == 0){// if empty set
                     dispatch(update(status.SUCCESS, names.GET_CUSTOMERS, 'no results'));
-                else{
-                    recieve_multiple_customers(dispatch, resp.data)
+                }else {
+                    set_multiple_customers(dispatch, resp.data)
                     dispatch(update(status.NONE, names.GET_CUSTOMERS));
                 }
 
@@ -52,11 +57,43 @@ export const get_customers_by_name = (name_str) => {
         })
     }
 }
-const recieve_multiple_customers = (dispatch, customers) => {
+const set_multiple_customers = (dispatch, customers) => {
     dispatch({
-        type:RECEIVE_MULTIPLE_CUSTOMERS,
+        type: SET_MULTIPLE_CUSTOMERS,
         payload: { customers }
     })
+}
+
+export const load_more_customers_by_name = ({ name, offset }) => {
+    const params = { name, offset };
+    return dispatch => {
+        Axios.get('http://localhost:5000/customer/multiple', {
+            params: params
+        }).then(resp => {
+            if (resp.status == 200) {
+                if (resp.data.length == 0){ //no more to load
+                    console.log('stop loading')
+                    dispatch(stop_loading());
+                }else{
+                    dispatch(add_multiple_customers(resp.data))
+                }
+            } else {// there can't be a conflict(409) here so must be some unexpected error
+                dispatch(update(status.ERROR, names.GET_CUSTOMERS));
+            }
+        })
+    }
+}
+const stop_loading = () =>{
+    return {
+        type:STOP_LOADING,
+        payload:null
+    };
+}
+const add_multiple_customers = (customers) => {
+    return {
+        type:ADD_MULTIPLE_CUSTOMERS,
+        payload: {customers}
+    }
 }
 
 

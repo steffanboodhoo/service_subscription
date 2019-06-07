@@ -35,6 +35,7 @@ class ServiceAPI():
 
     def get_customer_multiple(self, first_name, last_name, offset=None):
         session = Session(engine)
+        limit = LIMIT
         if offset is None:
             offset = 0
         else:
