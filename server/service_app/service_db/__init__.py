@@ -21,6 +21,20 @@ class ServiceAPI():
         session.close()
         return status
 
+    def update_agent_validation(self, email):
+        session = Session(engine)
+        filters = {'email': email}
+        update = {'validated': 1}
+        status = core.update(session, Agent, filters, update)
+        session.close()
+    
+    def remove_agent(self, email):
+        session = Session(engine)
+        filters = {'emal': email}
+        status = core.delete(session, Agent, filters)
+        session.close()
+        return status
+
     def get_all_services(self):
         session = Session(engine)
         records = self.clean_records(core.get(session, Service))
@@ -73,7 +87,7 @@ class ServiceAPI():
 
     def update_subscription(self, customer_id, service_id, status):
         session = Session(engine)
-        filters = {'customer_id': customer_id, 'service_id': service_id, }
+        filters = {'customer_id': customer_id, 'service_id': service_id}
         update = {'status': status}
         status = core.update(session, Subscription, filters, update)
         session.close()

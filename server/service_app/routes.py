@@ -44,6 +44,11 @@ def register():
     data = request.get_json()
     return gateway.register_agent(data['email'], data['password'])
 
+@app.route('/validation', methods=['GET'])
+def handle_validation():
+    token = request.args.get('token')
+    return gateway.handle_validation(token)
+
 @app.route('/logout', methods=['POST'])
 def logout():
     print session['SID']

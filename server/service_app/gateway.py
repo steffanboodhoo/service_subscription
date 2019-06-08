@@ -1,5 +1,7 @@
 from service_db import ServiceAPI
 from security import SecureAPI
+from service_email import core as smail
+import traceback
 import json
 sdb = ServiceAPI()
 sec = SecureAPI()
@@ -17,8 +19,22 @@ def authenticate(email, password):
 def register_agent(email, password):
     hashed_password = sec.hash_password(email, password)
     data = {'email':email, 'password':hashed_password, 'validated':0}
-    resp = sdb.add_agent(data)
-    return json.dumps(resp)
+    try:
+        resp = sdb.add_agent(data)
+        [validate_token, invalidate_token] = sec.create_email_tokens(email)
+        smail.account_validation_email(email, validate_token, invalidate_token)
+        return json.dumps(resp)
+    except Exception as e: #the only remaining possibility is the db HIT on email
+        traceback.print_exc()
+        return json.dumps({'status':'failure', 'message':'Email already exists'}), 409
+    
+def handle_validation(token):
+    [action, email] = sec.read_email_token(token)
+    print action, email
+    if action == 'VALIDATE':
+        return json.dumps(sdb.update_agent_validation(email))
+    elif action == 'INVALIDATE':
+        return json.dumps(sdb.remove_agent(email))
 
 def add_customer(email, contact_number, first_name, last_name):
     data = {'email':email, 'contact_number':contact_number, 'first_name':first_name, 'last_name':last_name}
