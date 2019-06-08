@@ -27,8 +27,6 @@ class App extends Component {
                 <PrivateRoute path='/home' component={Home} app={this.props.app} />
                 <DefaultRoute path='/login' component={Login} app={this.props.app} />
                 <Route path='/register' render={() => (<Register/>)}/>
-                    {/* <Route path='/home' render={() => (<Home />)} /> */}
-                    {/* <Route path='/login' render={() => (<Login />)} /> */}
             </div>
         </BrowserRouter>)
             }

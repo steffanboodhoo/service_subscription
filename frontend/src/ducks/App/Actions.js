@@ -39,7 +39,7 @@ export const handle_logout = () => {
         // dispatch(logout())
         Axios.post('http://localhost:5000/logout', {}).then(resp => {
             dispatch(logout())
-        }).catch( err =>{
+        }).catch(err => {
             dispatch(update(status.ERROR, names.LOGOUT))
         })
     }
@@ -54,9 +54,12 @@ export const handle_register = ({ email, password }) => {
     return dispatch => {
         dispatch(update(status.PENDING, names.REGISTER))
         Axios.post('http://localhost:5000/register', params, {}).then(resp => {
-
-        }).catch( err => {
-
+            dispatch(update(status.SUCCESS, names.REGISTER, 'successfully registered check your email or you probably need to validate before you log in'))
+            window.location.assign('/login')
+        }).catch(err => {
+            console.log(err.response)
+            console.log(err.response.data.message)
+            dispatch(update(status.FAILURE, names.REGISTER, err.response.data.message))
         })
     }
 }

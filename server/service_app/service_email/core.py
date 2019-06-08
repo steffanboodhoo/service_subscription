@@ -30,10 +30,10 @@ def account_validation_email(receiver_email, validate_token, invalidate_token):
 
 def service_update_email(receiver_email, customer_name, service_name, status):
     args = {'customer_name':customer_name, 'service_name':service_name, 'status':status}
-    fp = open(path+'validate_account.html', 'rb')
+    fp = open(path+'service_update.html', 'rb')
     raw_body = fp.read()
     fp.close()
-    format_and_send(raw_body, 'Account Validation', receiver_email, args)
+    format_and_send(raw_body, 'Service Update', receiver_email, args)
     
 # {order_number: 'CLOUD_111_1558030720969068, 'datetime':'12-10-3 12:22:10', reason: '1 more month(s) for instance'}
 # def payment_receipt(receiver_email, args=None):

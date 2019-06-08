@@ -38,7 +38,9 @@ def handle_validation(token):
 
 def add_customer(email, contact_number, first_name, last_name):
     data = {'email':email, 'contact_number':contact_number, 'first_name':first_name, 'last_name':last_name}
-    return json.dumps(sdb.add_customer(data))
+    resp = sdb.add_customer(data)
+    code = 200 if resp['status'] == 'success' else 409
+    return json.dumps(resp), code
 
 def get_customer(contact_number=None, email=None):
     return json.dumps(sdb.get_customer(contact_number, email))
@@ -53,13 +55,24 @@ def get_subscriptions(customer_id):
 
 def add_subscription(customer_id, service_id, agent_id):
     data = {'customer_id':customer_id, 'service_id':service_id, 'agent_id':agent_id, 'status':'ACTIVE'}
-    return json.dumps(sdb.add_subscription(data))
+    resp = sdb.add_subscription(data)
+    print resp
+    if resp['status'] == 'success' : smail.service_update_email(resp['customer']['email'], resp['customer']['first_name']+resp['customer']['last_name'], resp['service']['name'], 'ACTIVE')
+    code = 200 if resp['status'] == 'success' else 409
+    return json.dumps(resp), code
 
 def update_subscription(customer_id, service_id, status):
-    return json.dumps(sdb.update_subscription(customer_id, service_id, status))
+    resp = sdb.update_subscription(customer_id, service_id, status)
+    if resp['status'] == 'success' : smail.service_update_email(resp['customer']['email'], resp['customer']['first_name']+resp['customer']['last_name'], resp['service']['name'], status)
+    code = 200 if resp['status'] == 'success' else 409
+    return json.dumps(resp), code
 
 def delete_subscription(customer_id, service_id):
-    return json.dumps(sdb.remove_subscription(customer_id, service_id))
+    resp = sdb.remove_subscription(customer_id, service_id)
+    print resp
+    if resp['status'] == 'success' : smail.service_update_email(resp['customer']['email'], resp['customer']['first_name']+resp['customer']['last_name'], resp['service']['name'], 'TERMINATED')
+    code = 200 if resp['status'] == 'success' else 409
+    return json.dumps(resp), code
 
 def get_services():
     return json.dumps(sdb.get_all_services())

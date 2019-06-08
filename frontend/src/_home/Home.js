@@ -49,30 +49,6 @@ class Home extends Component {
             <Alert ref='empty_modal' cid='empty' type='alert-Empty' header='Empty' message={'No results that match your search :('} />
         </div>)
     }
-    componentDidMount() {
-        // let el = document.querySelectorAll(".tabs");
-        // M.Tabs.init(el, {});
-        this.props.service_actions.get_services();
-    }
-    componentWillReceiveProps(nextProps) {
-        if (this.props.customer.selected.customer_id != nextProps.customer.selected.customer_id) {
-            this.props.subscription_actions.get_subscriptions(nextProps.customer.selected.customer_id);
-        }
-        //IF THE STATUS OF A REQUEST CHANGES e.g. a request is now *pending*, or the request has *succeeded* or *failed*
-        if (this.props.request_status.status != nextProps.request_status.status) {
-            if (nextProps.request_status.status == status.PENDING)
-                this.refs.loading_modal.display()
-            else
-                this.refs.loading_modal.close()// even if the Loading Modal was not open close has no effect so this is fine
-
-            //We want to show the request was successful
-            if (nextProps.request_status.status == status.SUCCESS)
-                this.refs.success_modal.display()
-
-            if (nextProps.request_status.name == names.GET_CUSTOMERS && nextProps.request_status.status == status.NONE)
-                this.refs.select_customer_modal.display()
-        }
-    }
 
     handle_customer_id_search(params) {
         this.props.customer_actions.get_customer(params);
@@ -91,7 +67,7 @@ class Home extends Component {
     handle_add_customer(params) {
         this.props.customer_actions.add_customer(params);
     }
-    handle_logout(){
+    handle_logout() {
         this.props.app_actions.handle_logout();
     }
     load_view() {
@@ -139,8 +115,33 @@ class Home extends Component {
     open_add_customer_form() {
         this.refs.add_customer_modal.display()
     }
+
+    componentDidMount() {
+        // let el = document.querySelectorAll(".tabs");
+        // M.Tabs.init(el, {});
+        this.props.service_actions.get_services();
+    }
+    componentWillReceiveProps(nextProps) {
+        if (this.props.customer.selected.customer_id != nextProps.customer.selected.customer_id) {
+            this.props.subscription_actions.get_subscriptions(nextProps.customer.selected.customer_id);
+        }
+        //IF THE STATUS OF A REQUEST CHANGES e.g. a request is now *pending*, or the request has *succeeded* or *failed*
+        if (this.props.request_status.status != nextProps.request_status.status) {
+            if (nextProps.request_status.status == status.PENDING)
+                this.refs.loading_modal.display()
+            else
+                this.refs.loading_modal.close()// even if the Loading Modal was not open close has no effect so this is fine
+
+            //We want to show the request was successful
+            if (nextProps.request_status.status == status.SUCCESS)
+                this.refs.success_modal.display()
+
+            if (nextProps.request_status.name == names.GET_CUSTOMERS && nextProps.request_status.status == status.NONE)
+                this.refs.select_customer_modal.display()
+        }
+    }
 }
-const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status: state.RequestStatus, app:state.App })
-const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch), service_actions: bindActionCreators(service_actions, dispatch), app_actions:bindActionCreators(app_actions, dispatch) })
+const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status: state.RequestStatus, app: state.App })
+const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch), service_actions: bindActionCreators(service_actions, dispatch), app_actions: bindActionCreators(app_actions, dispatch) })
 
 export default connect(mapStateToProps, mapActionsToProps)(Home);
