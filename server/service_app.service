@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve service app
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/home/service_subscription/server
+Environment="PATH=/home/service_subscription/server/env/bin"
+ExecStart=/home/service_subscription/server/env/bin/uwsgi --ini service_app.ini
+
+[Install]
+WantedBy=multi-user.target
