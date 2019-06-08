@@ -6,8 +6,8 @@ Base = declarative_base()
 class Agent(Base):
     __tablename__ = 'agent'
     agent_id = Column(Integer, primary_key=True)
-    email = Column(String(50))
-    password = Column(String(41))
+    email = Column(String(50), unique=True, nullable=False)
+    password = Column(String(41), nullable=False)
     validated = Column(Integer)
 
 class Service(Base):
@@ -15,13 +15,13 @@ class Service(Base):
     service_id = Column(Integer, primary_key=True)
     name = Column(String(50))
     description = Column(String(200))
-    price = Column(Float)
+    price = Column(Float, nullable=False)
 
 class Customer(Base):
     __tablename__ = 'customer'
     customer_id = Column(Integer, primary_key=True)
     email = Column(String(50), unique=True)
-    contact_number = Column(String(10))
+    contact_number = Column(String(10), unique=True, nullable=False)
     first_name = Column(String(50))
     last_name = Column(String(50))
     access_code = Column(Integer)

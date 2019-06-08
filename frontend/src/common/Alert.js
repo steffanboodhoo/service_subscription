@@ -14,7 +14,7 @@ class Alert extends Component {
                     <div className='row'><p>{this.props.message}</p></div>
                 </div>
                 <div className="modal-footer">
-                    <a href="#!" className="modal-close waves-effect waves-green btn-flat">Ok</a>
+                    <a href="#!" className="modal-close waves-effect waves-green btn-flat" onClick={this.handle_okay}>Ok</a>
                 </div>
             </div>
         )
@@ -30,6 +30,9 @@ class Alert extends Component {
     }
     close() {
         this.state.instance.close();
+    }
+    handle_okay(){
+        window.location.reload();
     }
 }
 

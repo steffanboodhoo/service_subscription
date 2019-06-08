@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as subscription_actions from '../ducks/Subscription/Actions';
 import * as customer_actions from '../ducks/Customer/Actions';
 import * as service_actions from '../ducks/Service/Actions';
+import * as app_actions from '../ducks/App/Actions';
 import { status, names } from '../ducks/RequestStatus/Actions';
 
 import CustomerSearch from '../_customer_search/CustomerSearch';
@@ -23,15 +24,24 @@ class Home extends Component {
 
     render() {
         return (<div className=''>
+
+            <nav>
+                <div className="nav-wrapper">
+                    <ul id="nav-mobile" className="right ">
+                        <li>{this.props.app.agent_email}</li>
+                        <li onClick={this.handle_logout.bind(this)}><a href="#">Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
             <div className='row card-panel hoverable center-align center-content'>
-                <CustomerSearch handle_customer_id_search={this.handle_customer_id_search.bind(this)} handle_customer_name_search={this.handle_customer_name_search.bind(this)}/>
+                <CustomerSearch handle_customer_id_search={this.handle_customer_id_search.bind(this)} handle_customer_name_search={this.handle_customer_name_search.bind(this)} />
             </div>
             <div className='main-container'>
                 {this.load_view()}
             </div>
 
-            <CustomerSelect ref='select_customer_modal' customers={this.props.customer.list} load_more={this.props.customer.load_more} handle_load_more_customers={this.handle_load_more_customers.bind(this)} handle_select_customer={this.handle_select_customer.bind(this)}/>
-            <CustomerForm ref='add_customer_modal' handle_add_customer={this.handle_add_customer.bind(this)}/>
+            <CustomerSelect ref='select_customer_modal' customers={this.props.customer.list} load_more={this.props.customer.load_more} handle_load_more_customers={this.handle_load_more_customers.bind(this)} handle_select_customer={this.handle_select_customer.bind(this)} />
+            <CustomerForm ref='add_customer_modal' handle_add_customer={this.handle_add_customer.bind(this)} />
             <Loading ref='loading_modal' />
 
             <Alert ref='success_modal' cid='success' type='alert-success' header='Success' message={this.props.request_status.message} />
@@ -56,10 +66,10 @@ class Home extends Component {
                 this.refs.loading_modal.close()// even if the Loading Modal was not open close has no effect so this is fine
 
             //We want to show the request was successful
-            if(nextProps.request_status.status == status.SUCCESS)
+            if (nextProps.request_status.status == status.SUCCESS)
                 this.refs.success_modal.display()
-            
-            if(nextProps.request_status.name == names.GET_CUSTOMERS && nextProps.request_status.status == status.NONE)
+
+            if (nextProps.request_status.name == names.GET_CUSTOMERS && nextProps.request_status.status == status.NONE)
                 this.refs.select_customer_modal.display()
         }
     }
@@ -67,19 +77,22 @@ class Home extends Component {
     handle_customer_id_search(params) {
         this.props.customer_actions.get_customer(params);
     }
-    handle_customer_name_search(name){
-        this.props.customer_actions.get_customers_by_name({name});
+    handle_customer_name_search(name) {
+        this.props.customer_actions.get_customers_by_name({ name });
     }
-    handle_load_more_customers(name){
+    handle_load_more_customers(name) {
         const offset = this.props.customer.list.length;
-        this.props.customer_actions.load_more_customers_by_name({name, offset})
+        this.props.customer_actions.load_more_customers_by_name({ name, offset })
     }
-    handle_select_customer(customer){
+    handle_select_customer(customer) {
         this.props.customer_actions.set_customer(customer);
         this.refs.select_customer_modal.close()
     }
-    handle_add_customer(params){
+    handle_add_customer(params) {
         this.props.customer_actions.add_customer(params);
+    }
+    handle_logout(){
+        this.props.app_actions.handle_logout();
     }
     load_view() {
         if (this.props.customer.selected.customer_id != '') {
@@ -90,10 +103,10 @@ class Home extends Component {
                             <CustomerDetails customer={this.props.customer.selected} />
                         </div>
                         <div className='col m5 s12  hoverable column-container'>
-                            <SubscriptionAdd customer={this.props.customer.selected} services={this.props.service} subscription={this.props.subscription}/>
+                            <SubscriptionAdd customer={this.props.customer.selected} services={this.props.service} subscription={this.props.subscription} />
                         </div>
                         <div className='col m5 s12 column-container'>
-                            <SubscriptionManage customer={this.props.customer.selected} services={this.props.service} subscription={this.props.subscription}/>
+                            <SubscriptionManage customer={this.props.customer.selected} services={this.props.service} subscription={this.props.subscription} />
                         </div>
                     </div>
                     {/* <div className='row' id='device_tabs'>
@@ -121,13 +134,13 @@ class Home extends Component {
         // else if (this.props.request_status.name == names.GET_CUSTOMER && this.props.request_status.status == status.PENDING)
         //     return (<Loading />);
         else
-            return (<DefaultTextView handle_click={ this.open_add_customer_form.bind(this) }/>)
+            return (<DefaultTextView handle_click={this.open_add_customer_form.bind(this)} />)
     }
-    open_add_customer_form(){
+    open_add_customer_form() {
         this.refs.add_customer_modal.display()
     }
 }
-const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status: state.RequestStatus })
-const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch), service_actions: bindActionCreators(service_actions, dispatch) })
+const mapStateToProps = (state) => ({ subscription: state.Subscription, customer: state.Customer, service: state.Service, request_status: state.RequestStatus, app:state.App })
+const mapActionsToProps = (dispatch) => ({ subscription_actions: bindActionCreators(subscription_actions, dispatch), customer_actions: bindActionCreators(customer_actions, dispatch), service_actions: bindActionCreators(service_actions, dispatch), app_actions:bindActionCreators(app_actions, dispatch) })
 
 export default connect(mapStateToProps, mapActionsToProps)(Home);

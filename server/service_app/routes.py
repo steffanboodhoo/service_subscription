@@ -13,12 +13,15 @@ def store_agent_id(session, agent_id):
 def read_agent_id(session):
     token = session['SID']
     data = jwt.decode(token, config.JWT_SECRET)
+    return data['agent_id']
 
 def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         agent_id = -1
         try:
+            print session['TEST']
+            print session['SID']
             agent_id = read_agent_id(session)
         except Exception as e:
             return json.dumps({'message':'Token is invalid/missing'}), 401
@@ -31,6 +34,7 @@ def authenticate():
     resp = gateway.authenticate(data['email'], data['password'])
     if resp['status'] == 'success':
         print resp['agent_id']
+        session['TEST'] = 'steffan'
         store_agent_id(session, resp['agent_id'])
         return json.dumps(resp), 200
     return json.dumps(resp), 401
@@ -40,6 +44,11 @@ def register():
     data = request.get_json()
     return gateway.register_agent(data['email'], data['password'])
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    print session['SID']
+    session.pop('SID')
+    return json.dumps({'status':'success'})
 
 @app.route('/customer', methods=['GET', 'POST', 'DELETE'])
 @auth_required
@@ -64,10 +73,11 @@ def handle_subscription():
         return gateway.get_subscriptions(customer_id)
     elif request.method == 'POST':
         data = request.get_json()
+        agent_id = read_agent_id(session)
         return gateway.add_subscription(data['customer_id'], data['service_id'], agent_id)
     elif request.method == 'DELETE': #TODO TEST
         data = request.get_json()
-        return gateway.delete_subscription(data['customer_id'], data['servce_id'])
+        return gateway.delete_subscription(data['customer_id'], data['service_id'])
     elif request.method == 'PUT':
         data = request.get_json()
         return gateway.update_subscription(data['customer_id'], data['service_id'], data['status'])
