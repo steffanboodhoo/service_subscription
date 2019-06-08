@@ -19,7 +19,7 @@ class CustomerSearch extends Component {
                     <input placeholder='email address (joe@bad.com) or full contact number (8681234567)' id='input_id_search' onChange={this.handle_onchange.bind(this)} type='text' className="validate" />
                     <a className="waves-effect waves-light btn width-fill" onClick={this.handle_id_search_submit.bind(this)}>Search using email or contact number</a>
                     <h2>OR</h2>
-                    <input placeholder='First name and/or last name, e.g."Steffan Boodhoo" or "Steffan" or "Boodhoo' id='input_name_search' type='text' className="validate" />
+                    <input placeholder='Any part of the name e.g."Steffan Boodhoo", "Boodhoo","stef"' id='input_name_search' type='text' className="validate" />
                     <a className="waves-effect waves-light btn width-fill" onClick={this.handle_name_search_submit.bind(this)}>Search using name</a>
                 </div>
             </div>

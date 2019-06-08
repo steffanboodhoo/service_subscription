@@ -8,6 +8,8 @@ import Home from '../_home/Home';
 import Login from '../_login/Login';
 import Register from '../_register/Register';
 
+export const SERVER_URI = 'http://localhost:5000'
+
 const PrivateRoute = ({ component: Component, app, ...props }) => {
     return (<Route {...props} render={props => {
         return (app.logged_in ? <Component {...props} /> : <Redirect to='/login' />)

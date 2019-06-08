@@ -135,6 +135,8 @@ class Home extends Component {
             //We want to show the request was successful
             if (nextProps.request_status.status == status.SUCCESS)
                 this.refs.success_modal.display()
+            else if (nextProps.request_status.status == status.FAILURE)
+                this.refs.failure_modal.display()
 
             if (nextProps.request_status.name == names.GET_CUSTOMERS && nextProps.request_status.status == status.NONE)
                 this.refs.select_customer_modal.display()

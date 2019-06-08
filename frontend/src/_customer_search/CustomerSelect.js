@@ -9,6 +9,9 @@ class CustomerSelect extends Component {
     render() {
         return (<div id='select_customer_modal' className="modal">
             <div className="modal-content">
+                <div className='row'>
+                    <h4>Select Customer to continue</h4>
+                </div>
                 <div>
                     {this.props.customers.map((el, i) => {
                         return this.create_customer_item(el, i)
@@ -25,7 +28,7 @@ class CustomerSelect extends Component {
     }
     create_customer_item(el, i) {
         return (<div key={i} onClick={() => this.handle_select_customer(el)} data-cust-id={el.customer_id}>
-            <p> {el.first_name} {el.last_name} {el.email} {el.contact_number} </p>
+            <p className="cyan waves-effect  waves-green btn-flat"> {el.first_name} {el.last_name} {el.contact_number} </p>
         </div>)
     }
     handle_select_customer(el) {
