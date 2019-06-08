@@ -10,9 +10,9 @@ def format_and_send(raw, subject, receiver_email, body_args=None):
     msg['From'] = me = config.EMAIL['ADDRESS']
     msg['To'] = you = receiver_email
 
-    server = smtplib.SMTP('smtp.gmail.com:587')
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.ehlo()
-    server.starttls()
+    # server.starttls()
     server.login(config.EMAIL['ADDRESS'], config.EMAIL['PASSWORD'])
     server.sendmail(me, you, msg.as_string())
     server.quit()
