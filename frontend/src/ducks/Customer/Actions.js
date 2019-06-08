@@ -1,5 +1,5 @@
 import Axios from "axios";
-import {SERVER_URI} from '../../_app/App';
+// import {SERVER_URI} from '../../_app/App';
 import { names, status, update } from '../RequestStatus/Actions';
 
 const SET_CUSTOMER = 'CUSTOMER/SET_CUSTOMER';
@@ -13,7 +13,7 @@ export const get_customer = ({ email, contact_number }) => {
     let params = contact_number != undefined ? { contact_number } : { email };
     return dispatch => {
         dispatch(update(status.PENDING, names.GET_CUSTOMER));
-        Axios.get(SERVER_URI+'/customer', {
+        Axios.get('/customer', {
             params: params
         }).then(resp => {
             dispatch(update(status.NONE, names.GET_CUSTOMER));
@@ -39,7 +39,7 @@ export const get_customers_by_name = ({ name }) => {
     console.log(name)
     return dispatch => {
         dispatch(update(status.PENDING, names.GET_CUSTOMERS))
-        Axios.get(SERVER_URI+'/customer/multiple', {
+        Axios.get('/customer/multiple', {
             params: { name }
         }).then(resp => {
             console.log(resp)
@@ -64,7 +64,7 @@ const set_multiple_customers = (dispatch, customers) => {
 export const load_more_customers_by_name = ({ name, offset }) => {
     const params = { name, offset };
     return dispatch => {
-        Axios.get(SERVER_URI+'/customer/multiple', {
+        Axios.get('/customer/multiple', {
             params: params
         }).then(resp => {
             if (resp.data.length == 0) { //no more to load
@@ -96,7 +96,7 @@ export const add_customer = ({ first_name, last_name, email, contact_number }) =
     let params = { first_name, last_name, email, contact_number };
     return dispatch => {
         dispatch(update(status.PENDING, names.ADD_CUSTOMER))
-        Axios.post(SERVER_URI+'/customer', params, {}).then(resp => {
+        Axios.post('/customer', params, {}).then(resp => {
             dispatch(update(status.SUCCESS, names.ADD_CUSTOMER, 'Customer successfully created'))
         }).catch(err => {
             if (err.response.status == 409) {

@@ -1,4 +1,4 @@
-from flask import request, session
+from flask import request, session, send_from_directory, redirect
 from service_app import app, config
 import gateway
 from functools import wraps
@@ -102,3 +102,17 @@ def handle_service():
 def test():
     return gateway.get_services()
 
+@app.route('/', methods=['GET'])
+def index():
+    return send_from_directory('static','index.html')
+
+@app.errorhandler(404)
+def route_not_found(e):
+    # note that we set the 404 status explicitly
+    return redirect('/')
+# @app.route('/home', methods=['GET'])
+# def home_to_index():
+
+# @app.route('/register', methods=['GET'])
+# def register_to_index():
+# @app.route('/login', methods=['GET'])

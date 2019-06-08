@@ -7,14 +7,19 @@ sdb = ServiceAPI()
 sec = SecureAPI()
 
 def authenticate(email, password):
-    agent = sdb.get_agent(email)
-    authenticated = sec.authenticate_agent(email, password, agent['password'])
-    if authenticated and agent['validated']==1:
-        return {'status':'success', 'agent_id':agent['agent_id'], 'email':agent['email']}
-    elif authenticated:
-        return {'status':'failure', 'message':'agent email account not validated'}
-    else:
+    try:
+        agent = sdb.get_agent(email)
+        authenticated = sec.authenticate_agent(email, password, agent['password'])
+        if authenticated and agent['validated']==1:
+            return {'status':'success', 'agent_id':agent['agent_id'], 'email':agent['email']}
+        elif authenticated:
+            return {'status':'failure', 'message':'agent email account not validated'}
+        else:
+            return {'status':'failure', 'message':'wrong email and or password'}
+    except Exception as e:
         return {'status':'failure', 'message':'wrong email and or password'}
+        
+
 
 def register_agent(email, password):
     hashed_password = sec.hash_password(email, password)
