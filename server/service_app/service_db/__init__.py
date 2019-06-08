@@ -8,6 +8,18 @@ Base.metadata.create_all(engine)
 LIMIT = 3
 
 class ServiceAPI():
+    def get_agent(self, email):
+        session = Session(engine)
+        filters = {'email': email}
+        agent = self.clean_records(core.get(session, Agent, filters))[0]
+        session.close()
+        return agent
+    
+    def add_agent(self, data):
+        session = Session(engine)
+        status = core.insert(session, Agent, data)
+        session.close()
+        return status
 
     def get_all_services(self):
         session = Session(engine)

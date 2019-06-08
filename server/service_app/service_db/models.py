@@ -6,8 +6,9 @@ Base = declarative_base()
 class Agent(Base):
     __tablename__ = 'agent'
     agent_id = Column(Integer, primary_key=True)
-    username = Column(String(50))
-    password = Column(String(50))
+    email = Column(String(50))
+    password = Column(String(41))
+    validated = Column(Integer)
 
 class Service(Base):
     __tablename__ = 'service'

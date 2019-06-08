@@ -1,6 +1,24 @@
 from service_db import ServiceAPI
+from security import SecureAPI
 import json
 sdb = ServiceAPI()
+sec = SecureAPI()
+
+def authenticate(email, password):
+    agent = sdb.get_agent(email)
+    authenticated = sec.authenticate_agent(email, password, agent['password'])
+    if authenticated and agent['validated']==1:
+        return {'status':'success', 'agent_id':agent['agent_id'], 'email':agent['email']}
+    elif authenticated:
+        return {'status':'failure', 'message':'agent email account not validated'}
+    else:
+        return {'status':'failure', 'message':'wrong email and or password'}
+
+def register_agent(email, password):
+    hashed_password = sec.hash_password(email, password)
+    data = {'email':email, 'password':hashed_password, 'validated':0}
+    resp = sdb.add_agent(data)
+    return json.dumps(resp)
 
 def add_customer(email, contact_number, first_name, last_name):
     data = {'email':email, 'contact_number':contact_number, 'first_name':first_name, 'last_name':last_name}

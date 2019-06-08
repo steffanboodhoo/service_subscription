@@ -1,11 +1,48 @@
-from flask import request
-from service_app import app
+from flask import request, session
+from service_app import app, config
 import gateway
+from functools import wraps
+import jwt, json
 
 #TODO implement by using session for agent
-agent_id = 1
+
+def store_agent_id(session, agent_id):
+    token = jwt.encode({'agent_id':agent_id}, config.JWT_SECRET)
+    session['SID'] = token
+
+def read_agent_id(session):
+    token = session['SID']
+    data = jwt.decode(token, config.JWT_SECRET)
+
+def auth_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        agent_id = -1
+        try:
+            agent_id = read_agent_id(session)
+        except Exception as e:
+            return json.dumps({'message':'Token is invalid/missing'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/authenticate', methods=['POST'])
+def authenticate():
+    data = request.get_json()
+    resp = gateway.authenticate(data['email'], data['password'])
+    if resp['status'] == 'success':
+        print resp['agent_id']
+        store_agent_id(session, resp['agent_id'])
+        return json.dumps(resp), 200
+    return json.dumps(resp), 401
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    return gateway.register_agent(data['email'], data['password'])
+
 
 @app.route('/customer', methods=['GET', 'POST', 'DELETE'])
+@auth_required
 def handle_customer():
     if request.method == 'GET':
         email = request.args.get('email')
@@ -20,6 +57,7 @@ def handle_customer():
         return 'unimplemented'
 
 @app.route('/subscription', methods=['GET', 'POST', 'DELETE', 'PUT'])
+@auth_required
 def handle_subscription():
     if request.method == 'GET':
         customer_id = request.args.get('customer_id')
@@ -35,6 +73,7 @@ def handle_subscription():
         return gateway.update_subscription(data['customer_id'], data['service_id'], data['status'])
 
 @app.route('/customer/multiple', methods=['GET'])
+@auth_required
 def handle_customer_multiple():
     name = request.args.get('name')
     offset = request.args.get('offset')
