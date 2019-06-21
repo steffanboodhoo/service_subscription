@@ -81,3 +81,6 @@ def delete_subscription(customer_id, service_id):
 
 def get_services():
     return json.dumps(sdb.get_all_services())
+
+def test_mail():
+    smail.service_update_email('boodhoo100@gmail.com', 'test', 'test', 'TEST')

@@ -1,4 +1,4 @@
-import smtplib, os
+import smtplib, os, ssl
 from email.mime.text import MIMEText
 from service_app import config
 path = 'service_app/service_email/templates/'

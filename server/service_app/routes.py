@@ -112,6 +112,10 @@ def route_not_found(e):
     return redirect('/')
 # @app.route('/home', methods=['GET'])
 # def home_to_index():
+@app.route('/testmailabcdefg', methods=['GET'])
+def test_mail():
+    gateway.test_mail()
+    return 'test'
 
 # @app.route('/register', methods=['GET'])
 # def register_to_index():
