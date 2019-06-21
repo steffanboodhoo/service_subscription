@@ -14,7 +14,7 @@ class CustomerSearch extends Component {
 
     render() {
         return (<div className='row'>
-            <div className='col m10 s12'>
+            <div className='col m12 s12'>
                 <div className="input-field">
                     <input placeholder='email address (joe@bad.com) or full contact number (8681234567)' id='input_id_search' onChange={this.handle_onchange.bind(this)} type='text' className="validate" />
                     <a className="waves-effect waves-light btn width-fill" onClick={this.handle_id_search_submit.bind(this)}>Search using email or contact number</a>
@@ -23,8 +23,8 @@ class CustomerSearch extends Component {
                     <a className="waves-effect waves-light btn width-fill" onClick={this.handle_name_search_submit.bind(this)}>Search using name</a>
                 </div>
             </div>
-            <Alert ref='alert_modal' cid='id_search' type='alert-error' header='Invalid Search Information' message='Please enter a valid phone number 10 digits e.g. 8681234567 or a valid email address joe@bad.com' />
-            <Alert ref='alert_modal' cid='name_search' type='alert-error' header='Invalid Search Information' message='Please enter a valid name longer than 2 characters' />
+            <Alert ref='alert_modal_id' cid='id_search' type='alert-error' header='Invalid Search Information' message='Please enter a valid phone number 10 digits e.g. 8681234567 or a valid email address joe@bad.com' />
+            <Alert ref='alert_modal_name' cid='name_search' type='alert-error' header='Invalid Search Information' message='Please enter a valid name longer than 2 characters' />
         </div>)
     }
 
@@ -47,7 +47,7 @@ class CustomerSearch extends Component {
 
     handle_id_search_submit(ev) {
         if (!(this.state.valid_number || this.state.valid_email)) {
-            this.refs.alert_modal.display();
+            this.refs.alert_modal_id.display();
             return;
         }
         let params = {}
@@ -60,6 +60,10 @@ class CustomerSearch extends Component {
 
     handle_name_search_submit(ev){
         const name = document.getElementById('input_name_search').value;
+        if(name.length<=2){
+            this.refs.alert_modal_name.display();
+            return;
+        }
         this.props.handle_customer_name_search(name);
     }
 

@@ -48,7 +48,11 @@ def add_customer(email, contact_number, first_name, last_name):
     return json.dumps(resp), code
 
 def get_customer(contact_number=None, email=None):
-    return json.dumps(sdb.get_customer(contact_number, email))
+    try:
+        return json.dumps(sdb.get_customer(contact_number, email))
+    except Exception as e:
+        return json.dumps({'status':'failure', 'message':'no records found'}), 409
+        
 
 def get_customer_multiple(name, offset=None):
     names = name.split(' ')

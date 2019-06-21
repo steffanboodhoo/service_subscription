@@ -20,7 +20,7 @@ export const get_customer = ({ email, contact_number }) => {
             dispatch(set_customer(resp.data));
         }).catch(err => {
             if (err.response.status == 409) {
-                let message = ('data' in resp && 'message' in resp.data) ? resp.data.message : '';
+                let message = ('data' in err.response && 'message' in err.response.data) ? err.response.data.message : 'something went wrong';
                 dispatch(update(status.FAILURE, names.GET_CUSTOMER, message));
             }
         })
