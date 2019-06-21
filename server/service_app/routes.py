@@ -34,7 +34,7 @@ def authenticate():
     resp = gateway.authenticate(data['email'], data['password'])
     if resp['status'] == 'success':
         print resp['agent_id']
-        session['TEST'] = 'steffan'
+        # session['TEST'] = 'steffan'
         store_agent_id(session, resp['agent_id'])
         return json.dumps(resp), 200
     return json.dumps(resp), 401
@@ -47,7 +47,8 @@ def register():
 @app.route('/validation', methods=['GET'])
 def handle_validation():
     token = request.args.get('token')
-    return gateway.handle_validation(token)
+    gateway.handle_validation(token)
+    return redirect('/')
 
 @app.route('/logout', methods=['POST'])
 def logout():
